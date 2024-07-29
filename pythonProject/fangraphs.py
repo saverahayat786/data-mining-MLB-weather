@@ -38,6 +38,7 @@ def get_mlb_game_data(year):
                         'Location': game['venue']['name'],
                         'Team': game['teams'][team.lower()]['team']['name'],
                         'Opponent': game['teams']['away' if team == 'Home' else 'home']['team']['name'],
+                        'At Bats': stats['atBats'],
                         'Singles': singles,
                         'Doubles': stats['doubles'],
                         'Triples': stats['triples'],
@@ -46,11 +47,19 @@ def get_mlb_game_data(year):
                     }
                     games.append(game_info)
 
-    return pd.DataFrame(games)
+    return games
 
-year = 2023
-df = get_mlb_game_data(year)
+# Collect data for each year from 2013 to 2023
+all_games = []
+for year in range(2013, 2024):
+    print(f"Fetching data for {year}...")
+    year_games = get_mlb_game_data(year)
+    all_games.extend(year_games)
 
-df.to_csv(f'mlb_games_{year}.csv', index=False)
+# Convert to DataFrame
+df = pd.DataFrame(all_games)
 
-print(f"Data for {year} has been saved to mlb_games_{year}.csv")
+# Save to a CSV file
+df.to_csv('mlb_games_2013_to_2023.csv', index=False)
+
+print("Data for 2013 to 2023 has been saved to mlb_games_2013_to_2023.csv")
